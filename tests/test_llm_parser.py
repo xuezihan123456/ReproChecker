@@ -83,19 +83,17 @@ class TestParseLlmJson:
     """LLM JSON 解析测试"""
 
     def test_valid_json_array(self) -> None:
-        content = json.dumps([
-            {"metric_name": "accuracy", "metric_value": 92.1, "method_name": "Ours"}
-        ])
+        content = json.dumps(
+            [{"metric_name": "accuracy", "metric_value": 92.1, "method_name": "Ours"}]
+        )
         result = _parse_llm_json(content)
         assert len(result) == 1
         assert result[0]["metric_name"] == "accuracy"
 
     def test_wrapped_in_dict(self) -> None:
-        content = json.dumps({
-            "results": [
-                {"metric_name": "accuracy", "metric_value": 92.1, "method_name": "Ours"}
-            ]
-        })
+        content = json.dumps(
+            {"results": [{"metric_name": "accuracy", "metric_value": 92.1, "method_name": "Ours"}]}
+        )
         result = _parse_llm_json(content)
         assert len(result) == 1
 

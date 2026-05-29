@@ -101,6 +101,7 @@ class TestLatexExport:
         mock_db.get_check.return_value = None
 
         import pytest
+
         with pytest.raises(ValueError, match="不存在"):
             generate_latex(999, output_dir=tmp_path)
 

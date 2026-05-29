@@ -45,11 +45,18 @@ def version_callback(value: bool) -> None:
 @app.callback()
 def main(
     version: bool | None = typer.Option(  # noqa: UP007
-        None, "--version", "-v", callback=version_callback, is_eager=True,
+        None,
+        "--version",
+        "-v",
+        callback=version_callback,
+        is_eager=True,
         help="显示版本号",
     ),
     config: Path | None = typer.Option(  # noqa: UP007
-        None, "--config", "-c", help="配置文件路径（repro.yaml / repro.json）",
+        None,
+        "--config",
+        "-c",
+        help="配置文件路径（repro.yaml / repro.json）",
     ),
 ) -> None:
     """ReproChecker — 学术论文可复现性自动检验工具"""
@@ -170,8 +177,8 @@ def show(
         mins, secs = divmod(int(record["duration_sec"]), 60)
         console.print(f"  耗时: {mins}m {secs}s")
     if record.get("overall_score") is not None:
-        grade = record.get('grade', '-')
-        score = record['overall_score']
+        grade = record.get("grade", "-")
+        score = record["overall_score"]
         console.print(f"\n  [bold]评分: {grade} ({score:.0f}/100)[/]")
         console.print(f"  指标复现: {record.get('metric_score', '-')}")
         console.print(f"  环境复现: {record.get('env_score', '-')}")
@@ -192,7 +199,8 @@ def show(
                 c["metric_name"],
                 f"{c['paper_value']}" if c.get("paper_value") is not None else "-",
                 f"{c['actual_value']}" if c.get("actual_value") is not None else "-",
-                f"{c.get('relative_error', 0):.1f}%" if c.get("relative_error") is not None
+                f"{c.get('relative_error', 0):.1f}%"
+                if c.get("relative_error") is not None
                 else "-",
                 status_str,
             )
@@ -363,12 +371,14 @@ def batch(
                     dry_run=dry_run,
                 )
                 record = db.get_check(check_id)
-                results.append({
-                    "url": url,
-                    "status": "success",
-                    "grade": record.get("grade", "-") if record else "-",
-                    "score": record.get("overall_score") if record else None,
-                })
+                results.append(
+                    {
+                        "url": url,
+                        "status": "success",
+                        "grade": record.get("grade", "-") if record else "-",
+                        "score": record.get("overall_score") if record else None,
+                    }
+                )
             except Exception as e:
                 db.update_check(check_id, run_status="failed", notes=str(e))
                 results.append({"url": url, "status": "failed", "grade": "-"})
@@ -416,12 +426,12 @@ def compare(
         raise typer.Exit(code=1)
 
     console.print(f"\n[bold]═══ 对比: #{id1} vs #{id2} ═══[/]")
-    name1 = r1.get('repo_name', 'N/A')
-    g1 = r1.get('grade', '-')
-    s1 = r1.get('overall_score', '-')
-    name2 = r2.get('repo_name', 'N/A')
-    g2 = r2.get('grade', '-')
-    s2 = r2.get('overall_score', '-')
+    name1 = r1.get("repo_name", "N/A")
+    g1 = r1.get("grade", "-")
+    s1 = r1.get("overall_score", "-")
+    name2 = r2.get("repo_name", "N/A")
+    g2 = r2.get("grade", "-")
+    s2 = r2.get("overall_score", "-")
     console.print(f"  #{id1}: {name1} — {g1} ({s1})")
     console.print(f"  #{id2}: {name2} — {g2} ({s2})")
 
@@ -504,8 +514,10 @@ def trend(
     table.add_column("日期")
 
     status_colors = {
-        "success": "green", "failed": "red",
-        "running": "yellow", "pending": "dim",
+        "success": "green",
+        "failed": "red",
+        "running": "yellow",
+        "pending": "dim",
     }
 
     for r in records:
@@ -530,8 +542,7 @@ def trend(
             diff = scores[-1] - scores[0]
             arrow = "↑" if diff > 0 else "↓" if diff < 0 else "→"
             console.print(
-                f"\n  趋势: {arrow} {diff:+.1f} 分"
-                f"（从 {scores[0]:.0f} 到 {scores[-1]:.0f}）"
+                f"\n  趋势: {arrow} {diff:+.1f} 分（从 {scores[0]:.0f} 到 {scores[-1]:.0f}）"
             )
     console.print()
 
@@ -623,32 +634,25 @@ def import_data(
 
         # 创建新记录（不保留旧 ID，避免冲突）
         check_data.pop("id", None)
-        new_id = db.create_check(**{
-            k: v for k, v in check_data.items()
-            if k not in ("id",) and v is not None
-        })
+        new_id = db.create_check(
+            **{k: v for k, v in check_data.items() if k not in ("id",) and v is not None}
+        )
 
         # 导入关联数据
         for pr in entry.get("paper_results", []):
             pr.pop("id", None)
             pr.pop("check_id", None)
-            db.add_paper_result(new_id, **{
-                k: v for k, v in pr.items() if v is not None
-            })
+            db.add_paper_result(new_id, **{k: v for k, v in pr.items() if v is not None})
 
         for ar in entry.get("actual_results", []):
             ar.pop("id", None)
             ar.pop("check_id", None)
-            db.add_actual_result(new_id, **{
-                k: v for k, v in ar.items() if v is not None
-            })
+            db.add_actual_result(new_id, **{k: v for k, v in ar.items() if v is not None})
 
         for comp in entry.get("comparisons", []):
             comp.pop("id", None)
             comp.pop("check_id", None)
-            db.add_comparison(new_id, **{
-                k: v for k, v in comp.items() if v is not None
-            })
+            db.add_comparison(new_id, **{k: v for k, v in comp.items() if v is not None})
 
         imported += 1
 
@@ -725,7 +729,8 @@ def cache_list() -> None:
 @cache_app.command(name="clear")
 def cache_clear(
     repo_name: str | None = typer.Argument(  # noqa: UP007
-        None, help="指定仓库名清除（格式: owner/repo），为空则清除全部",
+        None,
+        help="指定仓库名清除（格式: owner/repo），为空则清除全部",
     ),
     force: bool = typer.Option(False, "--force", "-f", help="跳过确认"),
 ) -> None:
@@ -742,9 +747,7 @@ def cache_clear(
 
         size = _dir_size(cache_dir) if cache_dir.exists() else 0
         if not force:
-            confirm = typer.confirm(
-                f"确认清除仓库 '{repo_name}' 的缓存（{_format_size(size)}）？"
-            )
+            confirm = typer.confirm(f"确认清除仓库 '{repo_name}' 的缓存（{_format_size(size)}）？")
             if not confirm:
                 raise typer.Abort()
 
@@ -764,9 +767,7 @@ def cache_clear(
                 total_size += _dir_size(repo_path)
 
         if not force:
-            console.print(
-                f"[bold]将清除 {len(repos)} 个缓存仓库（{_format_size(total_size)}）[/]"
-            )
+            console.print(f"[bold]将清除 {len(repos)} 个缓存仓库（{_format_size(total_size)}）[/]")
             confirm = typer.confirm("确认清除全部缓存？")
             if not confirm:
                 raise typer.Abort()

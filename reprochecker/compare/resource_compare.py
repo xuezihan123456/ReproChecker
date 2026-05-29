@@ -77,15 +77,13 @@ def format_resource_summary(comparison: dict) -> str:
         s = comparison["model_size"]
         status = "✓" if s["match"] else "✗"
         lines.append(
-            f"  {status} 模型大小: {s['paper']:.1f}MB → "
-            f"{s['actual']:.1f}MB ({s['diff_mb']:+.1f}MB)"
+            f"  {status} 模型大小: {s['paper']:.1f}MB → {s['actual']:.1f}MB ({s['diff_mb']:+.1f}MB)"
         )
 
     if "inference_speed" in comparison:
         sp = comparison["inference_speed"]
         lines.append(
-            f"  ~ 推理速度: {sp['paper_ms']:.1f}ms → "
-            f"{sp['actual_ms']:.1f}ms ({sp['ratio']:.2f}x)"
+            f"  ~ 推理速度: {sp['paper_ms']:.1f}ms → {sp['actual_ms']:.1f}ms ({sp['ratio']:.2f}x)"
         )
 
     return "\n".join(lines) if lines else "  无资源对比数据"

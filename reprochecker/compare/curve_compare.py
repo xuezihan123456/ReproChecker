@@ -122,7 +122,7 @@ def _detect_underfit(values: list[float]) -> bool:
     """检测欠拟合：指标未收敛"""
     if len(values) < 10:
         return False
-    last_10pct = values[len(values) * 9 // 10:]
+    last_10pct = values[len(values) * 9 // 10 :]
     if not last_10pct:
         return False
     mean = sum(last_10pct) / len(last_10pct)

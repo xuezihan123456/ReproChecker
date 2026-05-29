@@ -24,9 +24,7 @@ _GIT_SSH_RE = re.compile(
     r":(?P<owner>[^/]+)/(?P<repo>[^/\s]+?)(?:\.git)?(?:\s|$)"
 )
 # HuggingFace: https://huggingface.co/user/repo
-_HF_RE = re.compile(
-    r"https?://huggingface\.co/(?P<owner>[^/]+)/(?P<repo>[^/\s]+?)(?:/)?(?:\s|$)"
-)
+_HF_RE = re.compile(r"https?://huggingface\.co/(?P<owner>[^/]+)/(?P<repo>[^/\s]+?)(?:/)?(?:\s|$)")
 
 
 def parse_repo_name(url: str) -> str:
@@ -96,10 +94,13 @@ def _retry_clone(url: str, target: str, retries: int = 3) -> git.Repo:
         except git.GitCommandError as e:
             last_exc = e
             if attempt < retries - 1:
-                wait = 2 ** attempt
+                wait = 2**attempt
                 logger.warning(
                     "克隆失败 (attempt %d/%d)，%ds 后重试: %s",
-                    attempt + 1, retries, wait, e,
+                    attempt + 1,
+                    retries,
+                    wait,
+                    e,
                 )
                 time.sleep(wait)
     raise last_exc  # type: ignore[misc]
@@ -196,10 +197,12 @@ def list_cached_repos() -> list[dict[str, str]]:
 
         # 将 'owner___repo' 还原为 'owner/repo'
         name = child.name.replace("___", "/", 1)
-        results.append({
-            "name": name,
-            "path": str(child),
-            "commit_hash": commit_hash,
-        })
+        results.append(
+            {
+                "name": name,
+                "path": str(child),
+                "commit_hash": commit_hash,
+            }
+        )
 
     return results

@@ -31,9 +31,19 @@ def _collect_py_files(repo_path: Path, max_files: int = 200) -> list[Path]:
         Python 文件路径列表。
     """
     skip_dirs = {
-        ".git", "__pycache__", ".venv", "venv", "env", ".env",
-        "node_modules", ".mypy_cache", ".pytest_cache", "build", "dist",
-        ".eggs", "*.egg-info",
+        ".git",
+        "__pycache__",
+        ".venv",
+        "venv",
+        "env",
+        ".env",
+        "node_modules",
+        ".mypy_cache",
+        ".pytest_cache",
+        "build",
+        "dist",
+        ".eggs",
+        "*.egg-info",
     }
     py_files: list[Path] = []
     for p in repo_path.rglob("*.py"):
@@ -160,10 +170,7 @@ def detect_entry_script(repo_path: Path, py_files: list[Path]) -> str | None:
     # 策略 1：根目录下按关键字匹配
     root_py = {p.name: p for p in py_files if p.parent == repo_path}
     for keyword in _ENTRY_KEYWORDS:
-        candidates = [
-            name for name in root_py
-            if keyword in name.lower() and name.endswith(".py")
-        ]
+        candidates = [name for name in root_py if keyword in name.lower() and name.endswith(".py")]
         if candidates:
             # 优先精确匹配
             for preferred in [f"{keyword}.py", f"{keyword}_script.py"]:

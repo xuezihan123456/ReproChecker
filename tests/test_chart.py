@@ -241,15 +241,25 @@ def _sample_comparisons() -> list[dict[str, Any]]:
 def _sample_trend() -> list[dict[str, Any]]:
     return [
         {
-            "id": 1, "overall_score": 80.0, "grade": "B",
-            "run_status": "success", "created_at": "2026-05-27",
-            "metric_score": 85.0, "env_score": 75.0, "code_score": 70.0,
+            "id": 1,
+            "overall_score": 80.0,
+            "grade": "B",
+            "run_status": "success",
+            "created_at": "2026-05-27",
+            "metric_score": 85.0,
+            "env_score": 75.0,
+            "code_score": 70.0,
             "duration_sec": 300,
         },
         {
-            "id": 2, "overall_score": 90.0, "grade": "A",
-            "run_status": "success", "created_at": "2026-05-28",
-            "metric_score": 95.0, "env_score": 85.0, "code_score": 80.0,
+            "id": 2,
+            "overall_score": 90.0,
+            "grade": "A",
+            "run_status": "success",
+            "created_at": "2026-05-28",
+            "metric_score": 95.0,
+            "env_score": 85.0,
+            "code_score": 80.0,
             "duration_sec": 250,
         },
     ]
@@ -302,8 +312,9 @@ class TestTrendChart:
         from reprochecker.report.chart import generate_trend_chart
 
         mock_db.get_trend.return_value = [_sample_trend()[0]]
-        result = generate_trend_chart("https://github.com/user/repo",
-                                       output_path=tmp_path / "trend.png")
+        result = generate_trend_chart(
+            "https://github.com/user/repo", output_path=tmp_path / "trend.png"
+        )
         assert result is None
 
     @patch("reprochecker.report.chart.db")
@@ -311,8 +322,9 @@ class TestTrendChart:
         from reprochecker.report.chart import generate_trend_chart
 
         mock_db.get_trend.return_value = []
-        result = generate_trend_chart("https://github.com/user/repo",
-                                       output_path=tmp_path / "trend.png")
+        result = generate_trend_chart(
+            "https://github.com/user/repo", output_path=tmp_path / "trend.png"
+        )
         assert result is None
 
     @patch("reprochecker.report.chart.db")

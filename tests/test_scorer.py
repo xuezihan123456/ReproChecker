@@ -60,8 +60,10 @@ class TestScorer:
 
     def test_env_score_docker(self) -> None:
         analysis = {
-            "has_dockerfile": True, "has_requirements": True,
-            "python_version": "3.10", "entry_script": "train.py",
+            "has_dockerfile": True,
+            "has_requirements": True,
+            "python_version": "3.10",
+            "entry_script": "train.py",
         }
         score = _calc_env_score({}, analysis)
         assert score == 80  # 40 + 20 + 10 + 10

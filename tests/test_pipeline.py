@@ -67,9 +67,7 @@ class TestPipelineStageErrors:
 
     @patch("reprochecker.pipeline.db")
     @patch("reprochecker.repo.cloner.clone_repo")
-    def test_clone_failure_marks_failed(
-        self, mock_clone: MagicMock, mock_db: MagicMock
-    ) -> None:
+    def test_clone_failure_marks_failed(self, mock_clone: MagicMock, mock_db: MagicMock) -> None:
         mock_clone.side_effect = RuntimeError("网络错误")
         from reprochecker.pipeline import run_check
 

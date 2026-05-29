@@ -207,8 +207,8 @@ def run_check(
         progress(6, "评分", f"✓ {score['grade']} ({score['overall']:.0f}/100)")
 
     db.update_check(check_id, run_status="success")
-    grade = score['grade']
-    total = score['overall']
+    grade = score["grade"]
+    total = score["overall"]
     console.print(f"\n[bold green]═══ 检验完成: {grade} ({total:.0f}/100) ═══[/]")
     logger.info("检验 #%d 完成", check_id)
 
@@ -235,6 +235,7 @@ def _run_dry(
     console.print(f"  [dim]将克隆: {url}[/]")
     console.print(f"  [dim]no_cache={no_cache}[/]")
     import tempfile
+
     repo_path = Path(tempfile.gettempdir()) / "reprochecker_dry" / repo_name
     progress(1, "克隆仓库", f"(跳过) -> {repo_name}")
 

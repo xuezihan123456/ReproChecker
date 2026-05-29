@@ -125,8 +125,13 @@ class TestResourceCompare:
 
     def test_format_summary(self) -> None:
         comparison = {
-            "params": {"paper": 25600000, "actual": 25800000, "diff": 200000,
-                       "diff_percent": 0.8, "match": True},
+            "params": {
+                "paper": 25600000,
+                "actual": 25800000,
+                "diff": 200000,
+                "diff_percent": 0.8,
+                "match": True,
+            },
         }
         summary = format_resource_summary(comparison)
         assert "25,600,000" in summary

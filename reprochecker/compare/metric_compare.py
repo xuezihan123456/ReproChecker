@@ -34,15 +34,17 @@ def compare_metrics(
         actual_val = actual_map.get(name)
 
         if actual_val is None:
-            comparisons.append({
-                "metric_name": pr["metric_name"],
-                "paper_value": paper_val,
-                "actual_value": None,
-                "absolute_error": None,
-                "relative_error": None,
-                "within_tolerance": None,
-                "tolerance_band": None,
-            })
+            comparisons.append(
+                {
+                    "metric_name": pr["metric_name"],
+                    "paper_value": paper_val,
+                    "actual_value": None,
+                    "absolute_error": None,
+                    "relative_error": None,
+                    "within_tolerance": None,
+                    "tolerance_band": None,
+                }
+            )
             continue
 
         abs_err = abs(actual_val - paper_val)
@@ -58,15 +60,17 @@ def compare_metrics(
         band = _get_tolerance_band(rel_err, config)
         within = rel_err <= config.tolerance_poor * 100  # 20% 以内算可复现
 
-        comparisons.append({
-            "metric_name": pr["metric_name"],
-            "paper_value": paper_val,
-            "actual_value": actual_val,
-            "absolute_error": round(abs_err, 4),
-            "relative_error": round(rel_err, 2),
-            "within_tolerance": within,
-            "tolerance_band": band,
-        })
+        comparisons.append(
+            {
+                "metric_name": pr["metric_name"],
+                "paper_value": paper_val,
+                "actual_value": actual_val,
+                "absolute_error": round(abs_err, 4),
+                "relative_error": round(rel_err, 2),
+                "within_tolerance": within,
+                "tolerance_band": band,
+            }
+        )
 
     return comparisons
 

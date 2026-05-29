@@ -27,9 +27,7 @@ class TestParseRequirementsTxt:
         assert "pandas" in names
 
     def test_version_parsing(self, tmp_path: Path) -> None:
-        (tmp_path / "requirements.txt").write_text(
-            "torch>=2.0\nnumpy==1.24.0\n", encoding="utf-8"
-        )
+        (tmp_path / "requirements.txt").write_text("torch>=2.0\nnumpy==1.24.0\n", encoding="utf-8")
         pkgs = _parse_requirements_txt(tmp_path)
         by_name = {p["name"]: p["version"] for p in pkgs}
         assert by_name["torch"] == ">=2.0"

@@ -42,7 +42,8 @@ class TestCheckCommand:
 
         assert result.exit_code == 0, result.output
         mock_cli_db.create_check.assert_called_once_with(
-            repo_url="https://github.com/user/repo", pdf_path=None,
+            repo_url="https://github.com/user/repo",
+            pdf_path=None,
         )
         mock_run.assert_called_once()
         call_kwargs = mock_run.call_args
@@ -55,17 +56,28 @@ class TestCheckCommand:
         mock_run.return_value = None
         mock_cli_db.create_check.return_value = 1
         pdf_path = Path("/tmp/paper.pdf")
-        result = runner.invoke(app, [
-            "check", "https://github.com/user/repo",
-            "--pdf", str(pdf_path),
-            "--cmd", "python run.py",
-            "--env", "conda",
-            "--timeout", "3600",
-            "--gpu", "1",
-            "--seed", "123",
-            "--no-cache",
-            "--name", "MyExperiment",
-        ])
+        result = runner.invoke(
+            app,
+            [
+                "check",
+                "https://github.com/user/repo",
+                "--pdf",
+                str(pdf_path),
+                "--cmd",
+                "python run.py",
+                "--env",
+                "conda",
+                "--timeout",
+                "3600",
+                "--gpu",
+                "1",
+                "--seed",
+                "123",
+                "--no-cache",
+                "--name",
+                "MyExperiment",
+            ],
+        )
 
         assert result.exit_code == 0, result.output
         call_kwargs = mock_run.call_args.kwargs
@@ -90,7 +102,9 @@ class TestCheckCommand:
         assert result.exit_code == 1
         assert "失败" in result.output or "failed" in result.output.lower()
         mock_cli_db.update_check.assert_called_once_with(
-            1, run_status="failed", notes="clone failed",
+            1,
+            run_status="failed",
+            notes="clone failed",
         )
 
 
@@ -127,15 +141,30 @@ class TestListCommand:
         """传入筛选参数应转发到 db.list_checks"""
         mock_db.list_checks.return_value = [_sample_record(1)]
         with _patch_db(mock_db):
-            result = runner.invoke(app, [
-                "list", "--status", "success", "--repo", "user",
-                "--grade", "A", "--sort", "overall_score", "--limit", "5",
-            ])
+            result = runner.invoke(
+                app,
+                [
+                    "list",
+                    "--status",
+                    "success",
+                    "--repo",
+                    "user",
+                    "--grade",
+                    "A",
+                    "--sort",
+                    "overall_score",
+                    "--limit",
+                    "5",
+                ],
+            )
 
         assert result.exit_code == 0
         mock_db.list_checks.assert_called_once_with(
-            status="success", repo="user", grade="A",
-            sort="overall_score", limit=5,
+            status="success",
+            repo="user",
+            grade="A",
+            sort="overall_score",
+            limit=5,
         )
 
 
@@ -296,8 +325,10 @@ class TestCompareCommand:
 
     def test_compare_second_id_missing(self, mock_db: MagicMock) -> None:
         """第二个 ID 不存在应 exit(1)"""
+
         def _get(cid: int):
             return _sample_record(cid) if cid == 1 else None
+
         mock_db.get_check.side_effect = _get
         with _patch_db(mock_db):
             result = runner.invoke(app, ["compare", "1", "2"])
@@ -581,7 +612,8 @@ class TestCacheClear:
             patch("pathlib.Path.is_dir", return_value=True),
         ):
             result = runner.invoke(
-                app, ["cache", "clear", "user/repo", "--force"],
+                app,
+                ["cache", "clear", "user/repo", "--force"],
             )
 
         assert result.exit_code == 0, result.output

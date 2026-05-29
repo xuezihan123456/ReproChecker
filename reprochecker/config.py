@@ -18,10 +18,10 @@ _DEFAULTS: dict[str, Any] = {
         "code_weight": 0.30,
     },
     "tolerance": {
-        "excellent": 0.01,   # <1% 完全复现
-        "good": 0.05,        # 1-5% 基本复现
+        "excellent": 0.01,  # <1% 完全复现
+        "good": 0.05,  # 1-5% 基本复现
         "acceptable": 0.10,  # 5-10% 部分复现
-        "poor": 0.20,        # 10-20% 难以复现
+        "poor": 0.20,  # 10-20% 难以复现
     },
     "defaults": {
         "env": "auto",
@@ -54,6 +54,7 @@ class ConfigError(Exception):
 
 # ── 配置文件加载与合并 ────────────────────────────────────────────────
 
+
 def _deep_merge(base: dict, override: dict) -> dict:
     """递归合并字典，override 中的值覆盖 base。
 
@@ -84,9 +85,7 @@ def _validate_config(cfg: dict) -> None:
         if section in cfg and isinstance(cfg[section], dict):
             unknown = set(cfg[section].keys()) - allowed
             if unknown:
-                raise ConfigError(
-                    f"[{section}] 包含未知字段: {', '.join(sorted(unknown))}"
-                )
+                raise ConfigError(f"[{section}] 包含未知字段: {', '.join(sorted(unknown))}")
 
     # 评分权重必须和为 1.0
     if "scoring" in cfg:
@@ -96,9 +95,7 @@ def _validate_config(cfg: dict) -> None:
             for k in ("metric_weight", "env_weight", "code_weight")
         )
         if abs(total - 1.0) > 1e-6:
-            raise ConfigError(
-                f"评分权重之和必须为 1.0，当前为 {total:.4f}"
-            )
+            raise ConfigError(f"评分权重之和必须为 1.0，当前为 {total:.4f}")
 
     # 容差阈值必须递增
     if "tolerance" in cfg:
@@ -111,9 +108,7 @@ def _validate_config(cfg: dict) -> None:
         ]
         for i in range(len(vals) - 1):
             if vals[i] >= vals[i + 1]:
-                raise ConfigError(
-                    "容差阈值必须递增: excellent < good < acceptable < poor"
-                )
+                raise ConfigError("容差阈值必须递增: excellent < good < acceptable < poor")
 
     # timeout 必须为正整数
     if "defaults" in cfg and "timeout" in cfg["defaults"]:
@@ -201,6 +196,7 @@ def flatten_config(cfg: dict[str, Any]) -> dict[str, Any]:
 
 # ── 旧式 Config dataclass（保持向后兼容） ─────────────────────────────
 
+
 @dataclass(frozen=True)
 class Config:
     """ReproChecker 全局配置"""
@@ -223,16 +219,14 @@ class Config:
 
     # 容差阈值
     tolerance_excellent: float = 0.01  # <1% 完全复现
-    tolerance_good: float = 0.05      # 1-5% 基本复现
-    tolerance_fair: float = 0.10       # 5-10% 部分复现
-    tolerance_poor: float = 0.20       # 10-20% 难以复现
+    tolerance_good: float = 0.05  # 1-5% 基本复现
+    tolerance_fair: float = 0.10  # 5-10% 部分复现
+    tolerance_poor: float = 0.20  # 10-20% 难以复现
 
     # LLM 配置
     llm_provider: str = "openai"
     llm_model: str = "gpt-4o"
-    llm_api_key: str = field(
-        default_factory=lambda: os.environ.get("OPENAI_API_KEY", "")
-    )
+    llm_api_key: str = field(default_factory=lambda: os.environ.get("OPENAI_API_KEY", ""))
 
     def ensure_dirs(self) -> None:
         """确保所有必要目录存在"""

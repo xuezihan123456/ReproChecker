@@ -31,6 +31,7 @@ def generate_training_chart(
     """
     try:
         import matplotlib
+
         matplotlib.use("Agg")
         import matplotlib.pyplot as plt
     except ImportError:
@@ -211,13 +212,15 @@ def _generate_csv(
             writer.writerow(["# 指标对比"])
             writer.writerow(["指标名", "论文值", "实际值", "相对误差(%)", "是否达标"])
             for c in comparisons:
-                writer.writerow([
-                    c.get("metric_name", ""),
-                    c.get("paper_value", ""),
-                    c.get("actual_value", ""),
-                    f"{c.get('relative_error', 0):.1f}",
-                    "是" if c.get("within_tolerance") else "否",
-                ])
+                writer.writerow(
+                    [
+                        c.get("metric_name", ""),
+                        c.get("paper_value", ""),
+                        c.get("actual_value", ""),
+                        f"{c.get('relative_error', 0):.1f}",
+                        "是" if c.get("within_tolerance") else "否",
+                    ]
+                )
             writer.writerow([])
 
         # 捕获的指标
@@ -225,12 +228,14 @@ def _generate_csv(
             writer.writerow(["# 捕获的指标"])
             writer.writerow(["指标名", "值", "Epoch", "Step"])
             for r in actual_results:
-                writer.writerow([
-                    r.get("metric_name", ""),
-                    r.get("metric_value", ""),
-                    r.get("epoch", ""),
-                    r.get("step", ""),
-                ])
+                writer.writerow(
+                    [
+                        r.get("metric_name", ""),
+                        r.get("metric_value", ""),
+                        r.get("epoch", ""),
+                        r.get("step", ""),
+                    ]
+                )
 
     db.update_check(check_id, report_path=str(path))
     return path
@@ -249,7 +254,11 @@ def _generate_md(
     repo_name = record.get("repo_name", "") or record.get("repo_url", "")
 
     grade_emoji = {
-        "A": "🟢", "B": "🔵", "C": "🟡", "D": "🟠", "F": "🔴",
+        "A": "🟢",
+        "B": "🔵",
+        "C": "🟡",
+        "D": "🟠",
+        "F": "🔴",
     }
     emoji = grade_emoji.get(grade, "⚪")
 
@@ -286,7 +295,9 @@ def _generate_md(
             status = "✅" if c.get("within_tolerance") else "❌"
             paper = f"{c['paper_value']:.2f}" if c.get("paper_value") is not None else "-"
             actual = f"{c['actual_value']:.2f}" if c.get("actual_value") is not None else "-"
-            error = f"{c.get('relative_error', 0):.1f}%" if c.get("relative_error") is not None else "-"
+            error = (
+                f"{c.get('relative_error', 0):.1f}%" if c.get("relative_error") is not None else "-"
+            )
             lines.append(f"| {c['metric_name']} | {paper} | {actual} | {error} | {status} |")
         lines.append("")
 
@@ -307,11 +318,9 @@ def _generate_md(
         for r in actual_results:
             epoch = r.get("epoch", "-") or "-"
             step = r.get("step", "-") or "-"
-            val = r.get('metric_value')
+            val = r.get("metric_value")
             val_s = f"{val:.4f}" if val is not None else "-"
-            lines.append(
-                f"| {r['metric_name']} | {val_s} | {epoch} | {step} |"
-            )
+            lines.append(f"| {r['metric_name']} | {val_s} | {epoch} | {step} |")
         lines.append("")
 
     lines.append("---")
@@ -386,7 +395,12 @@ def _generate_html(
 ) -> Path:
     """生成 HTML 报告"""
     html = _render_html(
-        check_id, record, comparisons, paper_results, actual_results, output_dir,
+        check_id,
+        record,
+        comparisons,
+        paper_results,
+        actual_results,
+        output_dir,
     )
 
     path = output_dir / f"check_{check_id}.html"
@@ -409,7 +423,12 @@ def _generate_pdf(
     优先使用 WeasyPrint，其次尝试 pdfkit，都不可用时抛出 ImportError。
     """
     html = _render_html(
-        check_id, record, comparisons, paper_results, actual_results, output_dir,
+        check_id,
+        record,
+        comparisons,
+        paper_results,
+        actual_results,
+        output_dir,
     )
 
     pdf_path = output_dir / f"check_{check_id}.pdf"

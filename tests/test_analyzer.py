@@ -74,9 +74,7 @@ class TestDetectSeed:
         assert detect_seed(py_files) is True
 
     def test_detects_random_seed(self, tmp_path: Path) -> None:
-        (tmp_path / "train.py").write_text(
-            "import random\nrandom.seed(42)\n", encoding="utf-8"
-        )
+        (tmp_path / "train.py").write_text("import random\nrandom.seed(42)\n", encoding="utf-8")
         py_files = _collect_py_files(tmp_path)
         assert detect_seed(py_files) is True
 

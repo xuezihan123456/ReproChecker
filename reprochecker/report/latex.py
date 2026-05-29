@@ -104,11 +104,13 @@ def _comparison_table(comparisons: list[dict[str, Any]]) -> str:
 
         lines.append(f"    {name} & {paper_s} & {actual_s} & {error_s} & {ok_s} \\\\")
 
-    lines.extend([
-        r"    \bottomrule",
-        r"  \end{tabular}",
-        r"\end{table}",
-    ])
+    lines.extend(
+        [
+            r"    \bottomrule",
+            r"  \end{tabular}",
+            r"\end{table}",
+        ]
+    )
     return "\n".join(lines)
 
 

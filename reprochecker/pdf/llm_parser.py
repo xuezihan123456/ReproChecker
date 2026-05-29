@@ -110,6 +110,7 @@ def _try_llm_parse(text: str) -> list[dict[str, Any]] | None:
 
     try:
         from reprochecker.config import get_config
+
         config = get_config()
 
         client = OpenAI(
@@ -259,13 +260,15 @@ def _extract_key_value_pairs(lines: list[str]) -> list[dict[str, Any]]:
             if value is None:
                 continue
 
-            results.append({
-                "table_caption": "",
-                "method_name": "Reported",
-                "metric_name": normalized,
-                "metric_value": value,
-                "is_best": False,
-            })
+            results.append(
+                {
+                    "table_caption": "",
+                    "method_name": "Reported",
+                    "metric_name": normalized,
+                    "metric_value": value,
+                    "is_best": False,
+                }
+            )
     return results
 
 
@@ -276,9 +279,7 @@ def _extract_table_like_rows(lines: list[str]) -> list[dict[str, Any]]:
 
     for line in lines:
         # 检测表格标题
-        caption_match = re.match(
-            r"(?:table|tab)\s*\.?\s*\d+[.:]\s*(.+)", line, re.IGNORECASE
-        )
+        caption_match = re.match(r"(?:table|tab)\s*\.?\s*\d+[.:]\s*(.+)", line, re.IGNORECASE)
         if caption_match:
             current_caption = caption_match.group(1).strip()
             continue
@@ -312,13 +313,15 @@ def _extract_table_like_rows(lines: list[str]) -> list[dict[str, Any]]:
             if value is None:
                 continue
             # 简单启发式：如果值 > 1 可能是百分比或原始分数
-            results.append({
-                "table_caption": current_caption,
-                "method_name": method_name,
-                "metric_name": _guess_metric_from_context(current_caption, line),
-                "metric_value": value,
-                "is_best": is_best,
-            })
+            results.append(
+                {
+                    "table_caption": current_caption,
+                    "method_name": method_name,
+                    "metric_name": _guess_metric_from_context(current_caption, line),
+                    "metric_value": value,
+                    "is_best": is_best,
+                }
+            )
 
     return results
 

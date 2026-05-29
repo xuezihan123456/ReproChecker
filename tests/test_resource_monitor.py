@@ -65,6 +65,7 @@ class TestResourceMonitorStats:
         monitor.start()
         # Wait for at least one sample
         import time
+
         time.sleep(2)
         monitor.stop()
 
@@ -79,9 +80,7 @@ class TestGpuDetection:
 
     @patch("reprochecker.runner.resource_monitor.subprocess.run")
     def test_gpu_available(self, mock_run: MagicMock) -> None:
-        mock_run.return_value = MagicMock(
-            returncode=0, stdout="4096\n2048\n", stderr=""
-        )
+        mock_run.return_value = MagicMock(returncode=0, stdout="4096\n2048\n", stderr="")
         monitor = ResourceMonitor(interval=1)
         result = monitor._query_gpu_memory()
         assert result == 6144.0  # 4096 + 2048

@@ -20,6 +20,7 @@ _DEFAULT_INTERVAL = 5
 @dataclass
 class _SampleSnapshot:
     """单次采样快照。"""
+
     timestamp: float = 0.0
     cpu_percent: float = 0.0
     ram_mb: float = 0.0
@@ -29,6 +30,7 @@ class _SampleSnapshot:
 @dataclass
 class _PeakStats:
     """累计峰值统计。"""
+
     peak_cpu_percent: float = 0.0
     peak_ram_mb: float = 0.0
     peak_gpu_mem_mb: float = 0.0

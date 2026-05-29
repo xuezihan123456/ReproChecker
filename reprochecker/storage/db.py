@@ -11,30 +11,87 @@ from typing import Any
 from reprochecker.config import get_config
 
 # 列名白名单 — 防止 SQL 注入
-_CHECKS_COLS = frozenset({
-    "repo_url", "pdf_path", "repo_name", "commit_hash", "framework",
-    "python_version", "has_dockerfile", "has_requirements", "entry_script",
-    "has_seed", "env_method", "env_setup_log", "installed_packages",
-    "run_command", "run_status", "exit_code", "stdout", "stderr",
-    "start_time", "end_time", "duration_sec", "peak_gpu_mem_mb",
-    "peak_cpu_percent", "peak_ram_mb", "model_params", "model_size_mb",
-    "inference_ms", "overall_score", "grade", "metric_score", "env_score",
-    "code_score", "created_at", "notes", "report_path",
-})
-_PAPER_RESULTS_COLS = frozenset({
-    "check_id", "table_caption", "method_name", "metric_name",
-    "metric_value", "is_best",
-})
-_ACTUAL_RESULTS_COLS = frozenset({
-    "check_id", "metric_name", "metric_value", "step", "epoch", "timestamp",
-})
-_COMPARISONS_COLS = frozenset({
-    "check_id", "metric_name", "paper_value", "actual_value",
-    "absolute_error", "relative_error", "within_tolerance", "tolerance_band",
-})
-_CURVES_COLS = frozenset({
-    "check_id", "metric_name", "step", "value", "epoch", "timestamp",
-})
+_CHECKS_COLS = frozenset(
+    {
+        "repo_url",
+        "pdf_path",
+        "repo_name",
+        "commit_hash",
+        "framework",
+        "python_version",
+        "has_dockerfile",
+        "has_requirements",
+        "entry_script",
+        "has_seed",
+        "env_method",
+        "env_setup_log",
+        "installed_packages",
+        "run_command",
+        "run_status",
+        "exit_code",
+        "stdout",
+        "stderr",
+        "start_time",
+        "end_time",
+        "duration_sec",
+        "peak_gpu_mem_mb",
+        "peak_cpu_percent",
+        "peak_ram_mb",
+        "model_params",
+        "model_size_mb",
+        "inference_ms",
+        "overall_score",
+        "grade",
+        "metric_score",
+        "env_score",
+        "code_score",
+        "created_at",
+        "notes",
+        "report_path",
+    }
+)
+_PAPER_RESULTS_COLS = frozenset(
+    {
+        "check_id",
+        "table_caption",
+        "method_name",
+        "metric_name",
+        "metric_value",
+        "is_best",
+    }
+)
+_ACTUAL_RESULTS_COLS = frozenset(
+    {
+        "check_id",
+        "metric_name",
+        "metric_value",
+        "step",
+        "epoch",
+        "timestamp",
+    }
+)
+_COMPARISONS_COLS = frozenset(
+    {
+        "check_id",
+        "metric_name",
+        "paper_value",
+        "actual_value",
+        "absolute_error",
+        "relative_error",
+        "within_tolerance",
+        "tolerance_band",
+    }
+)
+_CURVES_COLS = frozenset(
+    {
+        "check_id",
+        "metric_name",
+        "step",
+        "value",
+        "epoch",
+        "timestamp",
+    }
+)
 
 
 def _validate_columns(names: Iterable[str], allowed: frozenset[str]) -> None:
@@ -174,9 +231,7 @@ class Database:
         placeholders = ", ".join(f":{k}" for k in fields)
         columns = ", ".join(fields.keys())
         with self._connect() as conn:
-            cursor = conn.execute(
-                f"INSERT INTO checks ({columns}) VALUES ({placeholders})", fields
-            )
+            cursor = conn.execute(f"INSERT INTO checks ({columns}) VALUES ({placeholders})", fields)
             return cursor.lastrowid  # type: ignore[return-value]
 
     def update_check(self, check_id: int, **kwargs: Any) -> None:
@@ -188,9 +243,7 @@ class Database:
         set_clause = ", ".join(f"{k} = :{k}" for k in kwargs)
         kwargs["check_id"] = check_id
         with self._connect() as conn:
-            conn.execute(
-                f"UPDATE checks SET {set_clause} WHERE id = :check_id", kwargs
-            )
+            conn.execute(f"UPDATE checks SET {set_clause} WHERE id = :check_id", kwargs)
 
     def get_check(self, check_id: int) -> dict[str, Any] | None:
         """获取单条检验记录"""
@@ -297,8 +350,9 @@ class Database:
 
     # ---- training_curves ----
 
-    def add_curve_point(self, check_id: int, metric_name: str, step: int, value: float,
-                        epoch: int | None = None) -> int:
+    def add_curve_point(
+        self, check_id: int, metric_name: str, step: int, value: float, epoch: int | None = None
+    ) -> int:
         with self._connect() as conn:
             cursor = conn.execute(
                 "INSERT INTO training_curves (check_id, metric_name, step, value, epoch) "

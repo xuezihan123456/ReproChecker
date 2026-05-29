@@ -16,9 +16,7 @@ from reprochecker.pdf.constants import BEST_MARKERS, KNOWN_METRICS
 logger = get_logger(__name__.replace("reprochecker.", ""))
 
 # 数值匹配模式：整数 / 小数 / 百分比
-_NUM_PATTERN = re.compile(
-    r"(?<![a-zA-Z])(\d+\.?\d*)\s*%?"
-)
+_NUM_PATTERN = re.compile(r"(?<![a-zA-Z])(\d+\.?\d*)\s*%?")
 
 # 表格标题模式
 _CAPTION_PATTERN = re.compile(
@@ -47,9 +45,7 @@ def extract_from_pdf(pdf_path: Path) -> list[dict[str, Any]]:
     try:
         text = extract_text(pdf_path)
         if text:
-            logger.info(
-                "表格提取无结果，已提取全文 %d 字符（需 LLM 处理）", len(text)
-            )
+            logger.info("表格提取无结果，已提取全文 %d 字符（需 LLM 处理）", len(text))
         else:
             logger.warning("PDF 文本提取也返回空结果: %s", pdf_path)
     except Exception:
@@ -111,9 +107,7 @@ def extract_tables(pdf_path: Path) -> list[dict[str, Any]]:
     return all_results
 
 
-def _parse_fitz_table(
-    table: Any, page: Any, page_idx: int
-) -> list[dict[str, Any]]:
+def _parse_fitz_table(table: Any, page: Any, page_idx: int) -> list[dict[str, Any]]:
     """解析单个 fitz 提取的表格对象。"""
     results: list[dict[str, Any]] = []
     try:
@@ -151,13 +145,15 @@ def _parse_fitz_table(
             value = _parse_numeric(cells[col_idx])
             if value is None:
                 continue
-            results.append({
-                "table_caption": caption,
-                "method_name": method_name,
-                "metric_name": metric_name,
-                "metric_value": value,
-                "is_best": is_best,
-            })
+            results.append(
+                {
+                    "table_caption": caption,
+                    "method_name": method_name,
+                    "metric_name": metric_name,
+                    "metric_value": value,
+                    "is_best": is_best,
+                }
+            )
 
     return results
 

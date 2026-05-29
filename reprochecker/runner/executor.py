@@ -15,11 +15,11 @@ logger = get_logger(__name__.replace("reprochecker.", ""))
 # 危险 shell 模式 — 命令注入检测
 _DANGEROUS_PATTERNS = re.compile(
     r"(?:"
-    r"`[^`]+`"           # backtick subshell
-    r"|\$\([^)]+\)"      # $(...) subshell
+    r"`[^`]+`"  # backtick subshell
+    r"|\$\([^)]+\)"  # $(...) subshell
     r"|\|\s*(?:bash|sh|zsh|curl|wget|nc|ncat)\b"  # pipe to shell/network
     r"|;\s*(?:rm|mkfs|dd|chmod|chown)\b"  # chained destructive commands
-    r"|>\s*/etc/"         # redirect to system files
+    r"|>\s*/etc/"  # redirect to system files
     r")",
     re.IGNORECASE,
 )
@@ -28,9 +28,8 @@ _DANGEROUS_PATTERNS = re.compile(
 def _validate_command(command: str) -> None:
     """检查命令是否包含明显的注入模式，危险时抛出 ValueError"""
     if _DANGEROUS_PATTERNS.search(command):
-        raise ValueError(
-            f"命令包含潜在危险模式，请手动检查: {command[:100]}"
-        )
+        raise ValueError(f"命令包含潜在危险模式，请手动检查: {command[:100]}")
+
 
 # 输出截断参数
 _HEAD_LINES = 200
@@ -116,7 +115,10 @@ def run_experiment(
 
     logger.info(
         "Running experiment: %s (cwd=%s, gpu=%s, timeout=%ds)",
-        effective_command, repo_path, gpu, timeout,
+        effective_command,
+        repo_path,
+        gpu,
+        timeout,
     )
 
     start_time = datetime.now(timezone.utc)
@@ -148,11 +150,13 @@ def run_experiment(
         # TimeoutExpired 可能有部分输出
         stdout_text = (
             exc.stdout.decode("utf-8", errors="replace")
-            if isinstance(exc.stdout, bytes) else (exc.stdout or "")
+            if isinstance(exc.stdout, bytes)
+            else (exc.stdout or "")
         )
         stderr_text = (
             exc.stderr.decode("utf-8", errors="replace")
-            if isinstance(exc.stderr, bytes) else (exc.stderr or "")
+            if isinstance(exc.stderr, bytes)
+            else (exc.stderr or "")
         )
         logger.warning("Experiment timed out after %ds", timeout)
 

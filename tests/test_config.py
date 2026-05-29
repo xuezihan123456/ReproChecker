@@ -97,7 +97,9 @@ class TestValidateConfig:
 
 class TestLoadConfig:
     def test_no_config_file_returns_defaults(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+        self,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         """没有配置文件时应返回默认值"""
         monkeypatch.chdir(tmp_path)

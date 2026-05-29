@@ -67,6 +67,7 @@ def _parse_environment_yml(repo_path: Path) -> dict:
 
     try:
         import yaml
+
         with open(yml_path, encoding="utf-8") as f:
             data = yaml.safe_load(f)
     except (OSError, Exception):
@@ -127,8 +128,9 @@ def _parse_setup_packages(repo_path: Path) -> list[dict[str, str]]:
             content = ""
         # 提取 [project] 下的 dependencies 数组
         dep_block = re.search(
-            r'\[project\].*?dependencies\s*=\s*\[(.*?)\]',
-            content, re.DOTALL,
+            r"\[project\].*?dependencies\s*=\s*\[(.*?)\]",
+            content,
+            re.DOTALL,
         )
         if dep_block:
             for m in re.finditer(r'"([^"]+)"', dep_block.group(1)):
@@ -205,8 +207,7 @@ def _build_docker(repo_path: Path, analysis: dict) -> dict:
         content = dockerfile.read_text(encoding="utf-8")
         # 提取 FROM 指令
         from_lines = [
-            line for line in content.splitlines()
-            if line.strip().upper().startswith("FROM")
+            line for line in content.splitlines() if line.strip().upper().startswith("FROM")
         ]
         for fl in from_lines:
             log_lines.append(f"[docker] 基础镜像: {fl.strip()}")
@@ -371,6 +372,7 @@ def build_env(
 
     if analysis is None:
         from reprochecker.repo.analyzer import analyze_repo
+
         analysis = analyze_repo(repo_path)
 
     # 确定搭建方法

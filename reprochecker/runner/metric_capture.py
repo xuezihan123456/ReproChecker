@@ -37,7 +37,6 @@ _METRIC_PATTERNS: list[re.Pattern[str]] = [
         r"(?P<name>[\w./]+)\s*[:=]\s*(?P<value>[\d.]+)",
         re.IGNORECASE,
     ),
-
     # ---- 百分比格式 ----
     # "Accuracy: 92.1%"
     re.compile(
@@ -45,7 +44,6 @@ _METRIC_PATTERNS: list[re.Pattern[str]] = [
         r"\s*[:=]\s*(?P<value>\d+\.?\d*)\s*%",
         re.IGNORECASE,
     ),
-
     # ---- 标准 key: value / key = value ----
     # "accuracy: 0.921" / "accuracy = 0.921"
     re.compile(
@@ -71,7 +69,6 @@ _METRIC_PATTERNS: list[re.Pattern[str]] = [
         r"\s*[:=]\s*(?P<value>\d*\.?\d+(?:[eE][+-]?\d+)?)",
         re.IGNORECASE,
     ),
-
     # ---- 训练进度行 (epoch/step 信息) ----
     # "train_loss: 0.123 (epoch 5, step 1000)"
     re.compile(
@@ -178,7 +175,7 @@ def capture_metrics(stdout: str, stderr: str) -> list[dict[str, Any]]:
                 name = _normalize_name(raw_name)
 
                 # 百分比自动转小数: 如果模式匹配了 "%" 后缀
-                if "%" in stripped[match.start():match.end() + 2]:
+                if "%" in stripped[match.start() : match.end() + 2]:
                     if value > 1.0:
                         value = round(value / 100.0, 6)
 

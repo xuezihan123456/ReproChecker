@@ -24,6 +24,7 @@ def generate_comparison_chart(
     """
     try:
         import matplotlib
+
         matplotlib.use("Agg")
         import matplotlib.pyplot as plt
         import numpy as np
@@ -51,17 +52,27 @@ def generate_comparison_chart(
     # 标注数值
     for bar in bars1:
         height = bar.get_height()
-        ax.annotate(f"{height:.2f}",
-                    xy=(bar.get_x() + bar.get_width() / 2, height),
-                    xytext=(0, 3), textcoords="offset points",
-                    ha="center", va="bottom", fontsize=8)
+        ax.annotate(
+            f"{height:.2f}",
+            xy=(bar.get_x() + bar.get_width() / 2, height),
+            xytext=(0, 3),
+            textcoords="offset points",
+            ha="center",
+            va="bottom",
+            fontsize=8,
+        )
 
     for bar in bars2:
         height = bar.get_height()
-        ax.annotate(f"{height:.2f}",
-                    xy=(bar.get_x() + bar.get_width() / 2, height),
-                    xytext=(0, 3), textcoords="offset points",
-                    ha="center", va="bottom", fontsize=8)
+        ax.annotate(
+            f"{height:.2f}",
+            xy=(bar.get_x() + bar.get_width() / 2, height),
+            xytext=(0, 3),
+            textcoords="offset points",
+            ha="center",
+            va="bottom",
+            fontsize=8,
+        )
 
     # 标记达标/不达标
     for i, c in enumerate(comparisons):
@@ -70,8 +81,13 @@ def generate_comparison_chart(
         color = "#27AE60" if ok else "#E74C3C"
         max_val = max(paper_vals[i], actual_vals[i])
         ax.text(
-            x[i], max_val * 1.08, marker,
-            ha="center", fontsize=14, color=color, fontweight="bold",
+            x[i],
+            max_val * 1.08,
+            marker,
+            ha="center",
+            fontsize=14,
+            color=color,
+            fontweight="bold",
         )
 
     ax.set_ylabel("Value")
@@ -107,6 +123,7 @@ def generate_trend_chart(
     """
     try:
         import matplotlib
+
         matplotlib.use("Agg")
         import matplotlib.pyplot as plt
     except ImportError:
@@ -127,8 +144,13 @@ def generate_trend_chart(
     fig, ax = plt.subplots(figsize=(max(6, len(records) * 0.8), 5))
 
     ax.plot(
-        range(len(dates)), overall, "o-",
-        color="#2C3E50", linewidth=2, label="Overall", zorder=5,
+        range(len(dates)),
+        overall,
+        "o-",
+        color="#2C3E50",
+        linewidth=2,
+        label="Overall",
+        zorder=5,
     )
     ax.plot(range(len(dates)), metric_scores, "s--", color="#4A90D9", alpha=0.7, label="Metric")
     ax.plot(range(len(dates)), env_scores, "^--", color="#27AE60", alpha=0.7, label="Environment")

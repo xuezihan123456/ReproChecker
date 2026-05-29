@@ -75,4 +75,3 @@ class TestMetricCapture:
         # 应该只捕获 accuracy，跳过错误行
         assert len(metrics) >= 1
         assert metrics[0]["name"] == "accuracy"
-
