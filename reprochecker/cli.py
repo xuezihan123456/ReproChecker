@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 import typer
 from rich.console import Console
@@ -44,7 +44,7 @@ def version_callback(value: bool) -> None:
 
 @app.callback()
 def main(
-    version: bool | None = typer.Option(  # noqa: UP007
+    version: Optional[bool] = typer.Option(
         None,
         "--version",
         "-v",
@@ -52,7 +52,7 @@ def main(
         is_eager=True,
         help="显示版本号",
     ),
-    config: Path | None = typer.Option(  # noqa: UP007
+    config: Optional[Path] = typer.Option(
         None,
         "--config",
         "-c",
@@ -71,14 +71,14 @@ def main(
 @app.command()
 def check(
     url: str = typer.Argument(help="GitHub 仓库 URL"),
-    pdf: Path | None = typer.Option(None, "--pdf", help="论文 PDF 路径"),  # noqa: UP007
-    cmd: str | None = typer.Option(None, "--cmd", help="自定义运行命令"),  # noqa: UP007
-    env: str | None = typer.Option(None, "--env", help="环境方式: docker/conda/venv/auto"),  # noqa: UP007
-    timeout: int | None = typer.Option(None, "--timeout", help="最大运行时间（秒）"),  # noqa: UP007
-    gpu: int | None = typer.Option(None, "--gpu", help="GPU 编号"),  # noqa: UP007
-    seed: int | None = typer.Option(None, "--seed", help="随机种子"),  # noqa: UP007
+    pdf: Optional[Path] = typer.Option(None, "--pdf", help="论文 PDF 路径"),
+    cmd: Optional[str] = typer.Option(None, "--cmd", help="自定义运行命令"),
+    env: Optional[str] = typer.Option(None, "--env", help="环境方式: docker/conda/venv/auto"),
+    timeout: Optional[int] = typer.Option(None, "--timeout", help="最大运行时间（秒）"),
+    gpu: Optional[int] = typer.Option(None, "--gpu", help="GPU 编号"),
+    seed: Optional[int] = typer.Option(None, "--seed", help="随机种子"),
     no_cache: bool = typer.Option(False, "--no-cache", help="不使用缓存，重新 clone"),
-    name: str | None = typer.Option(None, "--name", help="自定义检验名称"),  # noqa: UP007
+    name: Optional[str] = typer.Option(None, "--name", help="自定义检验名称"),
     dry_run: bool = typer.Option(False, "--dry-run", help="试运行模式，仅打印计划不实际执行"),
 ) -> None:
     """执行可复现性检验"""
@@ -116,9 +116,9 @@ def check(
 
 @app.command(name="list")
 def list_checks(
-    status: str | None = typer.Option(None, "--status", help="按状态筛选"),  # noqa: UP007
-    repo: str | None = typer.Option(None, "--repo", help="按仓库筛选"),  # noqa: UP007
-    grade: str | None = typer.Option(None, "--grade", help="按等级筛选"),  # noqa: UP007
+    status: Optional[str] = typer.Option(None, "--status", help="按状态筛选"),
+    repo: Optional[str] = typer.Option(None, "--repo", help="按仓库筛选"),
+    grade: Optional[str] = typer.Option(None, "--grade", help="按等级筛选"),
     sort: str = typer.Option("created_at", "--sort", help="排序字段"),
     limit: int = typer.Option(20, "--limit", help="返回数量"),
 ) -> None:
@@ -212,7 +212,7 @@ def show(
 def report(
     check_id: int = typer.Argument(help="检验 ID"),
     format: str = typer.Option("html", "--format", "-f", help="输出格式: html/pdf/json/csv/md"),
-    output: Path | None = typer.Option(None, "--output", "-o", help="输出目录"),  # noqa: UP007
+    output: Optional[Path] = typer.Option(None, "--output", "-o", help="输出目录"),
 ) -> None:
     """生成/导出报告"""
     from reprochecker.report.generator import generate_report
@@ -229,7 +229,7 @@ def report(
 @app.command()
 def badge(
     check_id: int = typer.Argument(help="检验 ID"),
-    output: Path | None = typer.Option(None, "--output", "-o", help="输出路径"),  # noqa: UP007
+    output: Optional[Path] = typer.Option(None, "--output", "-o", help="输出路径"),
 ) -> None:
     """生成可复现性 SVG 徽章"""
     from reprochecker.report.badge import generate_badge
@@ -246,7 +246,7 @@ def badge(
 @app.command()
 def latex(
     check_id: int = typer.Argument(help="检验 ID"),
-    output: Path | None = typer.Option(None, "--output", "-o", help="输出目录"),  # noqa: UP007
+    output: Optional[Path] = typer.Option(None, "--output", "-o", help="输出目录"),
 ) -> None:
     """导出 LaTeX 表格（可嵌入论文）"""
     from reprochecker.report.latex import generate_latex
@@ -263,7 +263,7 @@ def latex(
 @app.command()
 def chart(
     check_id: int = typer.Argument(help="检验 ID"),
-    output: Path | None = typer.Option(None, "--output", "-o", help="输出路径"),  # noqa: UP007
+    output: Optional[Path] = typer.Option(None, "--output", "-o", help="输出路径"),
 ) -> None:
     """生成论文值 vs 实际值的对比图"""
     from reprochecker.report.chart import generate_comparison_chart
@@ -283,10 +283,10 @@ def chart(
 @app.command()
 def batch(
     file: Path = typer.Argument(help="批检验配置文件路径（YAML/JSON）"),
-    env: str | None = typer.Option(None, "--env", help="环境方式: docker/conda/venv/auto"),  # noqa: UP007
-    timeout: int | None = typer.Option(None, "--timeout", help="最大运行时间（秒）"),  # noqa: UP007
-    gpu: int | None = typer.Option(None, "--gpu", help="GPU 编号"),  # noqa: UP007
-    seed: int | None = typer.Option(None, "--seed", help="随机种子"),  # noqa: UP007
+    env: Optional[str] = typer.Option(None, "--env", help="环境方式: docker/conda/venv/auto"),
+    timeout: Optional[int] = typer.Option(None, "--timeout", help="最大运行时间（秒）"),
+    gpu: Optional[int] = typer.Option(None, "--gpu", help="GPU 编号"),
+    seed: Optional[int] = typer.Option(None, "--seed", help="随机种子"),
     no_cache: bool = typer.Option(False, "--no-cache", help="不使用缓存，重新 clone"),
     dry_run: bool = typer.Option(False, "--dry-run", help="试运行模式，仅打印计划不实际执行"),
 ) -> None:
@@ -570,7 +570,7 @@ def delete(
 @app.command()
 def export(
     output: Path = typer.Argument(help="导出文件路径（.jsonl）"),
-    status: str | None = typer.Option(None, "--status", help="按状态筛选"),  # noqa: UP007
+    status: Optional[str] = typer.Option(None, "--status", help="按状态筛选"),
     limit: int = typer.Option(1000, "--limit", help="最大导出条数"),
 ) -> None:
     """导出检验数据为 JSONL 格式（便于迁移和备份）"""
@@ -728,7 +728,7 @@ def cache_list() -> None:
 
 @cache_app.command(name="clear")
 def cache_clear(
-    repo_name: str | None = typer.Argument(  # noqa: UP007
+    repo_name: Optional[str] = typer.Argument(
         None,
         help="指定仓库名清除（格式: owner/repo），为空则清除全部",
     ),
