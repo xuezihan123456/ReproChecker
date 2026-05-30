@@ -186,6 +186,8 @@ class TestDryRunCli:
 
     def test_cli_check_has_dry_run_option(self) -> None:
         """check 命令应有 --dry-run 选项"""
+        import re
+
         from typer.testing import CliRunner
 
         from reprochecker.cli import app
@@ -193,4 +195,6 @@ class TestDryRunCli:
         runner = CliRunner()
         result = runner.invoke(app, ["check", "--help"])
         assert result.exit_code == 0
-        assert "--dry-run" in result.output
+        # 剥离 ANSI 转义码后再检查，兼容不同 rich 版本的格式化差异
+        plain_output = re.sub(r"\x1b\[[0-9;]*m", "", result.output)
+        assert "--dry-run" in plain_output

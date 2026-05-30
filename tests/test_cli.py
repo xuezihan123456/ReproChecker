@@ -604,12 +604,16 @@ class TestCacheClear:
         assert result.exit_code == 0
         assert "暂无缓存仓库" in result.output
 
-    def test_clear_specific_repo_with_force(self) -> None:
+    def test_clear_specific_repo_with_force(self, tmp_path: Path) -> None:
         """--force 应跳过确认直接清除指定仓库。"""
+        # 创建模拟的缓存目录结构: tmp_path/.reprochecker/cache/user__repo/
+        cache_base = tmp_path / ".reprochecker" / "cache" / "user__repo"
+        cache_base.mkdir(parents=True)
+        (cache_base / "README.md").write_text("# test", encoding="utf-8")
+
         with (
             patch("reprochecker.repo.cloner.clear_cache", return_value=1) as mock_clear,
-            patch("pathlib.Path.exists", return_value=True),
-            patch("pathlib.Path.is_dir", return_value=True),
+            patch("reprochecker.cli.Path.home", return_value=tmp_path),
         ):
             result = runner.invoke(
                 app,
